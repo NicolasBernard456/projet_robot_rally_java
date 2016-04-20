@@ -42,8 +42,8 @@ public class Jeu {
 	 */
     public Jeu() {
     	Pioche = new Paquet();
-    	j1_ = new Joueur("joueur 1",Pioche.piocher_cartes(),1);
-    	j2_ = new Joueur("joueur 2",Pioche.piocher_cartes(),2);
+    	j1_ = new Joueur("BB8",Pioche.piocher_cartes(),1);
+    	j2_ = new Joueur("R2D2",Pioche.piocher_cartes(),2);
     	plateau_jeu = new Plateau(j1_,j2_);
     }
     
@@ -343,12 +343,12 @@ public class Jeu {
      * @return faux si le jeux est fini et vrai sinon
      */
     public boolean test_fin_jeu(Joueur j1, Joueur j2){
-    	if(j2.Getnb_vie() == 0 || j1.Getcpt_drapeaux() == 4){
+    	if(j2.Getnb_vie() <= 0 || j1.Getcpt_drapeaux() == 4){
     		System.out.println("VICTOIRE J1");
     		return false;
     	}
     	else
-    		if(j1.Getnb_vie() == 0 || j2.Getcpt_drapeaux() == 4){
+    		if(j1.Getnb_vie() <= 0 || j2.Getcpt_drapeaux() == 4){
         			System.out.println("VICTOIRE J2");
         			return false;
         	}

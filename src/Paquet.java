@@ -46,7 +46,7 @@ public class Paquet {
 	/**
 	 * Constructeur permettant de construire un paquet test contenant un seul type de carte avecla meme vitesse, utile pour les tests. L'entier en parametre 
 	 * permet de differencier le constructeur par defaut de celui ci.
-	 * @param test permet de differencier ce constructeur du construteur par defaut
+	 * @param test permet de choisir le type de carte pour remplir le paquet
 	 * @see Paquet#cartes
 	 * @see Paquet#Init_image(ArrayList)
 	 */
@@ -57,7 +57,7 @@ public class Paquet {
 		Carte c;
 		int i;
 		for(i = 0 ; i < 84 ; i++){
-			c = new Carte(i,5,Img.get(5));
+			c = new Carte(i,test,Img.get(test));
 			cartes.add(c);
 		}
 	}
@@ -220,7 +220,7 @@ public class Paquet {
 	 */
 	public Paquet piocher_cartes(){	//Piocher 9 cartes
 		Paquet pioche = new Paquet(this.Tirer_carte());
-		for(int i = 0 ; i < 9 ; i ++){
+		for(int i = 0 ; i < 8 ; i ++){
 			pioche.Ajouter_carte(this.Tirer_carte());
 		}
 		return pioche;

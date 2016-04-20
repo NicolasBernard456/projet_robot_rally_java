@@ -33,13 +33,14 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
 	/**
 	 * Differentes images utilisees pour le programme
 	 */
-	private Image img0, img1, img_trou, img_flag, img_arrive, img_barriere, img_coeur, img_explos, img_gameover;
+	private Image img0, img1, img_trou, img_flag, img_arrive, img_barriere, img_coeur, img_explos, img_gameover, img_reset, img_valide;
 	/**
 	 * Tableau d'entier gerant la selection des differentes cartes par le joueur
 	 */
     int [] cpt_cartes;
     /**
-     * Compteur pour l'affichage d'un gif d'une explosion
+     * Tableau contenant les positions x y d'une explosion sur le plateau
+     * et le compteur pour l'affichage d'un gif de l'explosion
      */
     int [] explos;
     /**
@@ -182,6 +183,8 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
 		img_coeur = Toolkit.getDefaultToolkit().getImage("life.png");
 		img_explos = Toolkit.getDefaultToolkit().getImage("explosion.gif");
 		img_gameover = Toolkit.getDefaultToolkit().getImage("gameover.gif");
+		img_reset = Toolkit.getDefaultToolkit().getImage("Reset.png");
+		img_valide = Toolkit.getDefaultToolkit().getImage("valider.png");
 		r = new Runnable() {
 			public void run() {
 				try {
@@ -324,6 +327,14 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
        }
        if(game_over == 1)
     	   g.drawImage(img_gameover, 450 , 250,this);
+       g.drawImage(img_reset,950,500,this);
+       g.drawImage(img_valide,1140,425,this);
+       if(j_cour.getnum() == 1)
+    	   g.setColor(Color.ORANGE);
+       else
+    	   g.setColor(Color.BLUE);
+       g.setFont(new Font("TimesRoman",Font.PLAIN,50));
+       g.drawString("Tour du joueur" + " " + j_cour.getnum() + " (" + j_cour.Getnom() + ") ", 550, 250);
     }
     
     /**
@@ -360,28 +371,28 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
 				break;
 			case 1 :
 				img_carte = pioche.Getcartes().get(j).getImg();
-				g.drawImage(img_carte, 600, 170,this);
-				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 655, 195);
+				g.drawImage(img_carte, 600, 290,this);
+				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 655, 315);
 				break;
 			case 2 :
 				img_carte = pioche.Getcartes().get(j).getImg();
-				g.drawImage(img_carte, 700, 170,this);
-				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 755, 195);
+				g.drawImage(img_carte, 700, 290,this);
+				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 755, 315);
 				break;
 			case 3 :
 				img_carte = pioche.Getcartes().get(j).getImg();
-				g.drawImage(img_carte, 800, 170,this);
-				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 855, 195);
+				g.drawImage(img_carte, 800, 290,this);
+				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 855, 315);
 				break;
 			case 4 : 
 				img_carte = pioche.Getcartes().get(j).getImg();
-				g.drawImage(img_carte, 900, 170,this);
-				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 955, 195);
+				g.drawImage(img_carte, 900, 290,this);
+				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 955, 315);
 				break;
 			case 5 :
 				img_carte = pioche.Getcartes().get(j).getImg();
-				g.drawImage(img_carte, 1000, 170,this);
-				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 1055, 195);
+				g.drawImage(img_carte, 1000, 290,this);
+				g.drawString(String.valueOf(pioche.Getcartes().get(j).getVitesse()), 1055, 315);
 				break;
 			default :
 				img_carte = Toolkit.getDefaultToolkit().getImage("blanc.png");
@@ -440,6 +451,7 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
      * A chaque clique de souris, on recupere la position du curseur
      * On délimite la zone d'action de l'tilisateur a la partie basse de la fenetre correspondant a la zone ou se trouve les cartes.
      * A chaque clique, on ajoute la carte cliquee au tableau cpt_cartes avec l'indice cpt_main qu'on incremente.
+     * Si on clique sur le boutton reset, les cartes sont remis a leur place et l'utilisateur peut reselectionne ces cartes
      * @see Plateau#cpt_cartes
      * @see Plateau#cpt_main
      * @see MouseEvent
@@ -453,6 +465,15 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
 			if(cpt_cartes[nx] == 0 && cpt_main < 6)
 				cpt_cartes[nx] = cpt_main++;
 		}
+		if((me.getX() - 1035)*(me.getX() - 1035) + (ny - 585) * (ny - 585) <= 5625 ){
+			System.out.println("Reset");
+			for(int i = 0 ; i < 9 ; i++)
+				cpt_cartes[i] = 0;
+			cpt_main = 1;
+		}
+		if((me.getX() - 1202) * (me.getX() - 1202) + (ny - 490) * (ny - 490) <= 4225)
+			System.out.println("Valider");
+			
 		repaint();
     }
 
@@ -612,6 +633,32 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
      */
     public void game_over(){
     	game_over = 1;
+    }
+    
+    /**
+     * Accesseur pour le game_over
+     * @return game_over
+     */
+    
+    public int getgame_over(){
+    	return game_over;
+    }
+    
+    /**
+     * Accesseur pour la pioche
+     * @return pioche
+     * @see Plateau#pioche
+     */
+    public Paquet getpioche(){
+    	return pioche;
+    }
+    
+    /**
+     * Accesseur pour le tableau explos[]
+     * @return le tableau explos
+     */
+    public int[] get_explosion(){
+    	return explos;
     }
 }
 

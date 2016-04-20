@@ -87,7 +87,7 @@ public class Robot {
 	/**
 	 * Deplace le robot de v case ou change l'orientation du robot
 	 * @param v nombre de cases dont le robot est deplace
-	 * @param orientation changement de l'orientation du robot
+	 * @param orientation changement de l'orientation du robot 0: demi tour 1 tourne a gauche 2 tourne a droite 
 	 * @param r_j2 robot adverse en cas de collision
 	 * @see Robot#c
 	 * @see Robot#orient
@@ -146,10 +146,26 @@ public class Robot {
 	}
 	
 	/**
+	 * En cas de collision pousse un robot vers la case a la position x y;
+	 * Le thread AePlayWave ne trouvait pas le fichier "accident.wav" lors des tests unitaires, j'utilise donc cette fonction qui remplit le meme role 
+	 * que bousculer mais sans le son.
+	 * @param x nouvelle coordonnee x du robot
+	 * @param y nouvelle coordonnee y du robot
+	 * @see AePlayWave
+	 * @see Robot#c
+	 * @see Case#Getx()
+	 * @see Case#Gety()
+	 * @see Case#change_case(int, int)
+	 */
+	public void bousculer_test(int x, int y){	//pousse le robot d'une case dans la direction souhaitée
+		c.change_case(this.Getx() + x, this.Gety() + y);
+	}
+	
+	/**
 	 * Fonction testant si il y a une collision avec un autre robot et le deplacant
 	 * @param x direction dans laquelle se diriger si different de -1
 	 * @param y direction dans laquelle se diriger si different de -1
-	 * @param v nombre de case a se deplacer (-1 , 1 , 2 ou 3)
+	 * @param v nombre de case a se deplacer (-1 , 2(1case) , 3(2cases) ou 4(3cases))
 	 * @param increment 1: se deplacer vers la gauche ou l'avant et -1 se deplacer vers la droite ou l'arriere (represente l'orientation du robot)
 	 * @param r_j2	robot adverse
 	 * @see Robot#c
@@ -186,6 +202,56 @@ public class Robot {
 					y += increment;
 					if(y == r_j2.Gety() && this.Getx() == r_j2.Getx())
 						r_j2.bousculer(0,increment);
+				}
+	
+				this.c.change_case(this.c.Getx(), y);
+			}
+		}
+		//System.out.println("Deplacement rob test " + this.Getx() + " " + this.Gety() + "orient " + orient);
+	}
+	
+	/**
+	 * Fonction testant si il y a une collision avec un autre robot et le deplacant,
+	 * Meme fonction que test_collision mais sans les sons pour les test unitaires
+	 * @param x direction dans laquelle se diriger si different de -1
+	 * @param y direction dans laquelle se diriger si different de -1
+	 * @param v nombre de case a se deplacer (-1 , 2(1case) , 3(2cases) ou 4(3cases))
+	 * @param increment 1: se deplacer vers la gauche ou l'avant et -1 se deplacer vers la droite ou l'arriere (represente l'orientation du robot)
+	 * @param r_j2	robot adverse
+	 * @see Robot#c
+	 * @see Robot#deplacement(int, int, Robot)
+	 * @see Robot#bousculer(int, int)
+	 * @see Case#change_case(int, int)
+	 */
+	public void test_collisiontest(int x, int y,int v,int increment,Robot r_j2){	//on regarde si les robots ne rentrent pas en contact
+		if(v == -1){
+			if(y == -1){
+				x -= increment;
+				if(x == r_j2.Getx() && this.Gety() == r_j2.Gety())
+					r_j2.bousculer_test(-increment,0);
+				this.c.change_case(x, this.c.Gety());
+			}
+			else{
+				y -= increment;
+				if(y == r_j2.Gety() && this.Getx() == r_j2.Getx())
+					r_j2.bousculer_test(0,-increment);
+				this.c.change_case(this.c.Getx(), y);
+			}
+		}
+		else{
+			if(y == -1){
+				for(int i = 0 ; i < v ; i++){
+					x += increment;
+					if(x == r_j2.Getx() && this.Gety() == r_j2.Gety())
+						r_j2.bousculer_test(increment,0);
+				}
+				this.c.change_case(x, this.c.Gety());
+			}
+			else{
+				for(int i = 0 ; i < v ; i++){
+					y += increment;
+					if(y == r_j2.Gety() && this.Getx() == r_j2.Getx())
+						r_j2.bousculer_test(0,increment);
 				}
 	
 				this.c.change_case(this.c.Getx(), y);
