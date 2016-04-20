@@ -118,7 +118,7 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
 		explos = new int[4];
 		explos[0] = 0;
 		explos[3] = 0;
-		game_over = 0;
+		game_over = -1;
 		for(int i = 0 ; i < 8 ; i++){
 			for(int j = 0 ; j < 8 ; j++){
 				Case c1 = new Case(i,j,0,0);
@@ -160,7 +160,6 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
 			}while(c_.get(tot).Getoccupe() != 0 || tot == 55 || tot == 48 || tot == 59 || tot == 58 || tot == 56);
 			c_.get(tot).change_type(6);
 			pose_obstacle_.add(new Case(x,y,6,1));
-			System.out.println(x + " " + y + " " + tot);
 		}
 		pose_obstacle = pose_obstacle_;
 		pose_trou = pose_trou_;
@@ -258,83 +257,101 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.setColor(Color.BLACK);       	
-        for(int i = 0 ; i <= 63 ; i ++){
-        	if(this.getCase(i).Gettype() == 1){
-        		g.drawImage(img_trou,this.getCasey(i)*60+61,this.getCasex(i)*60+61,this);
-        		//g.fillRect(this.getCasex(i)*60+60, this.getCasex(i)*60+60, 60, 60);
-        	}
-        	if(this.getCase(i).Gettype() == 5)
-        		g.drawImage(img_arrive,this.getCasey(i)*60+61,this.getCasex(i)*60+61,this);
-        	else
-        		if(this.getCase(i).Gettype() == 6)
-            		g.drawImage(img_barriere,this.getCasey(i)*60+61,this.getCasex(i)*60+61,this);
-        		else
-        			if(this.getCase(i).Gettype() > 1)
-        				g.drawImage(img_flag,this.getCasey(i)*60+61,this.getCasex(i)*60+61,this);
-        }
-        g.setColor(Color.ORANGE);
-        g.drawString("Vie BB8", 550,90);
-        for(int i = 0 ; i < j1.Getnb_vie() ; i++)
-        	g.drawImage(img_coeur,625 + 60 *i, 60,this);
-        g.drawString("Nb drapeaux BB8", 790,90);
-        for(int i = 0 ; i < j1.Getcpt_drapeaux() ; i++)
-        	g.drawImage(img_flag,900 + 60 *i, 60,this);
-        
-        
-        g.setColor(Color.BLUE);
-        g.drawString("Vie R2D2", 550,160);
-        for(int i = 0 ; i < j2.Getnb_vie() ; i++)
-        	g.drawImage(img_coeur,625 + 60 *i, 130,this);
-        g.drawString("Nb drapeaux R2D2", 790,160);
-        for(int i = 0 ; i < j2.Getcpt_drapeaux() ; i++)
-        	g.drawImage(img_flag,900 + 60 *i, 130,this);
-        AffineTransform old= g.getTransform();
-        AffineTransform tr1= new AffineTransform();
-    	AffineTransform tr2= new AffineTransform();
-    	
-    	tr1.rotate(Math.toRadians((j1.getr().Getorient() - 1) * 90),j1.getr().Getx()*60+91, j1.getr().Gety()*60+91);
-    	tr2.rotate(Math.toRadians((j2.getr().Getorient() - 1) * 90),j2.getr().Getx()*60+91, j2.getr().Gety()*60+91);
-    	 
-    	g.transform(tr1);
-        g.drawImage(img0, j1.getr().Getx()*60+61, j1.getr().Gety()*60+61,this);
-        g.setTransform(old);
-        g.transform(tr2);
-        g.drawImage(img1, j2.getr().Getx()*60+61, j2.getr().Gety()*60+61,this);
-        g.setTransform(old);
         g.setColor(Color.BLACK);
-        for(int i = 60 ; i <= 540 ; i += 60)
-        	g.drawLine(60,i,540,i);
-
-        for(int i = 60 ; i <= 540 ; i += 60)
-        	g.drawLine(i,60,i,540);
-        //if(j_cour.get_carte_joue().size() != 2)
-        	afficher_cartes(g);
-        
-      //  afficher_cartes_jouees(g);
-       if(explos[0] == 1 ){
-    	   g.drawImage(img_explos, (explos[1]+1)*60 , explos[2]* 60 + 61,this);
-    	   if(explos[3] == 0){
-    	        Thread playWave=new AePlayWave("explosion.wav");
-    	        playWave.start();
-    	   }
-    	   if(explos[3] > 50){
-    		   explos[0] = 0;
-    		   explos[3] = 0;
-    	   }
-    	   else
-    		   explos[3]++;
+        if(game_over == -1){
+	        for(int i = 0 ; i <= 63 ; i ++){
+	        	if(this.getCase(i).Gettype() == 1){
+	        		g.drawImage(img_trou,this.getCasey(i)*60+61,this.getCasex(i)*60+61,this);
+	        		//g.fillRect(this.getCasex(i)*60+60, this.getCasex(i)*60+60, 60, 60);
+	        	}
+	        	if(this.getCase(i).Gettype() == 5)
+	        		g.drawImage(img_arrive,this.getCasey(i)*60+61,this.getCasex(i)*60+61,this);
+	        	else
+	        		if(this.getCase(i).Gettype() == 6)
+	            		g.drawImage(img_barriere,this.getCasey(i)*60+61,this.getCasex(i)*60+61,this);
+	        		else
+	        			if(this.getCase(i).Gettype() > 1){
+	        				g.drawImage(img_flag,this.getCasey(i)*60+61,this.getCasex(i)*60+61,this);
+	        				g.setColor(Color.GRAY);
+	        				g.setFont(new Font("TimeRoman",Font.BOLD,15));
+	        				g.drawString("" + (this.getCase(i).Gettype()-1), this.getCasey(i)*60+81,this.getCasex(i)*60+85);
+	        			}
+	        }
+	        g.setColor(Color.ORANGE);
+	        g.drawString("Vie BB8", 550,90);
+	        for(int i = 0 ; i < j1.Getnb_vie() ; i++)
+	        	g.drawImage(img_coeur,625 + 60 *i, 60,this);
+	        g.drawString("Nb drapeaux BB8", 790,90);
+	        for(int i = 0 ; i < j1.Getcpt_drapeaux() ; i++)
+	        	g.drawImage(img_flag,980 + 60 *i, 60,this);
+	        
+	        
+	        g.setColor(Color.BLUE);
+	        g.drawString("Vie R2D2", 550,160);
+	        for(int i = 0 ; i < j2.Getnb_vie() ; i++)
+	        	g.drawImage(img_coeur,625 + 60 *i, 130,this);
+	        g.drawString("Nb drapeaux R2D2", 790,160);
+	        for(int i = 0 ; i < j2.Getcpt_drapeaux() ; i++)
+	        	g.drawImage(img_flag,980 + 60 *i, 130,this);
+	        AffineTransform old= g.getTransform();
+	        AffineTransform tr1= new AffineTransform();
+	    	AffineTransform tr2= new AffineTransform();
+	    	
+	    	tr1.rotate(Math.toRadians((j1.getr().Getorient() - 1) * 90),j1.getr().Getx()*60+91, j1.getr().Gety()*60+91);
+	    	tr2.rotate(Math.toRadians((j2.getr().Getorient() - 1) * 90),j2.getr().Getx()*60+91, j2.getr().Gety()*60+91);
+	    	 
+	    	g.transform(tr1);
+	        g.drawImage(img0, j1.getr().Getx()*60+61, j1.getr().Gety()*60+61,this);
+	        g.setTransform(old);
+	        g.transform(tr2);
+	        g.drawImage(img1, j2.getr().Getx()*60+61, j2.getr().Gety()*60+61,this);
+	        g.setTransform(old);
+	        g.setColor(Color.BLACK);
+	        for(int i = 60 ; i <= 540 ; i += 60)
+	        	g.drawLine(60,i,540,i);
+	
+	        for(int i = 60 ; i <= 540 ; i += 60)
+	        	g.drawLine(i,60,i,540);
+	        //if(j_cour.get_carte_joue().size() != 2)
+	        	afficher_cartes(g);
+	        
+	      //  afficher_cartes_jouees(g);
+	       if(explos[0] == 1 ){
+	    	   g.drawImage(img_explos, (explos[1]+1)*60 , explos[2]* 60 + 61,this);
+	    	   if(explos[3] == 0){
+	    	        Thread playWave=new AePlayWave("explosion.wav");
+	    	        playWave.start();
+	    	   }
+	    	   if(explos[3] > 50){
+	    		   explos[0] = 0;
+	    		   explos[3] = 0;
+	    	   }
+	    	   else
+	    		   explos[3]++;
+	       }
+	       g.drawImage(img_reset,950,500,this);
+	       g.drawImage(img_valide,1140,425,this);
+       
+    	   if(j_cour.getnum() == 1)
+	    	   g.setColor(Color.ORANGE);
+	       else
+	    	   g.setColor(Color.BLUE);
+    	   g.setFont(new Font("TimesRoman",Font.PLAIN,50));
+	       g.drawString("Tour du joueur" + " " + j_cour.getnum() + " (" + j_cour.Getnom() + ") ", 550, 250);
        }
-       if(game_over == 1)
+       else{
+    	   g.setFont(new Font("TimesRoman",Font.PLAIN,50));
+    	   if(game_over == 1){
+    		   j_cour = j1;
+    		   g.setColor(Color.ORANGE);
+    	   }
+    	   else{
+    		   j_cour = j2;
+    		   g.setColor(Color.BLUE);
+    	   }
+    	   g.drawString("Victoire du joueur" + " " + j_cour.getnum() + " (" + j_cour.Getnom() + ") ", 400, 210);
     	   g.drawImage(img_gameover, 450 , 250,this);
-       g.drawImage(img_reset,950,500,this);
-       g.drawImage(img_valide,1140,425,this);
-       if(j_cour.getnum() == 1)
-    	   g.setColor(Color.ORANGE);
-       else
-    	   g.setColor(Color.BLUE);
-       g.setFont(new Font("TimesRoman",Font.PLAIN,50));
-       g.drawString("Tour du joueur" + " " + j_cour.getnum() + " (" + j_cour.Getnom() + ") ", 550, 250);
+       }
     }
     
     /**
@@ -399,8 +416,7 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
 				g.drawImage(img_carte, j*101, 540,this);
 			}
 		}
-		if(cpt_main == 6){
-			System.out.println("fin_selection");
+		if(cpt_main == 7){
 			ArrayList<Carte> c = new ArrayList<Carte>();
 			int cpt = 1;
 			for(int j = 0 ; cpt != 6 ; j++){
@@ -409,13 +425,10 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
 				if(cpt_cartes[j] == cpt){
 					cpt++;
 					c.add(pioche.Getcartes().get(j));
-					//pioche.Getcartes().get(j).affiche_carte();
-					//System.out.println(pioche.Getcartes().get(j).gettype_fleche());
 					j = 0;
 				}
 			}
 			j_cour.Getp().recuperer_paquet(c);
-			//System.out.println(c.size());
 			cpt_main++;
 			fin++;
 		}
@@ -460,19 +473,19 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
     public void mousePressed(MouseEvent me) {
 		int nx=me.getX()/101;
 		int ny=me.getY();
-		//System.out.println(nx+" "+ny);
 		if(nx < 9 && nx >= 0 && ny >= 543){
 			if(cpt_cartes[nx] == 0 && cpt_main < 6)
 				cpt_cartes[nx] = cpt_main++;
 		}
 		if((me.getX() - 1035)*(me.getX() - 1035) + (ny - 585) * (ny - 585) <= 5625 ){
-			System.out.println("Reset");
 			for(int i = 0 ; i < 9 ; i++)
 				cpt_cartes[i] = 0;
 			cpt_main = 1;
 		}
-		if((me.getX() - 1202) * (me.getX() - 1202) + (ny - 490) * (ny - 490) <= 4225)
-			System.out.println("Valider");
+		if((me.getX() - 1202) * (me.getX() - 1202) + (ny - 490) * (ny - 490) <= 4225){
+			if(cpt_main == 6)
+				cpt_main++;
+		}
 			
 		repaint();
     }
@@ -627,12 +640,12 @@ public class Plateau extends JPanel implements MouseListener, MouseMotionListene
     }
 
     /**
-     * Fonction mettant l'entier game_over a 1 indiquant la fin de partie et activant le gif de fin de partie
+     * Fonction mettant l'entier game_over au numero du joueur ayant gagner indiquant la fin de partie et activant le gif de fin de partie
      * @see Plateau#game_over
      * @see Plateau#paintComponent(Graphics)
      */
-    public void game_over(){
-    	game_over = 1;
+    public void game_over(Joueur j){
+    	game_over = j.getnum();
     }
     
     /**

@@ -80,6 +80,8 @@ public class Jeu {
     		test_plateau(j1, j2); // On regarde si les robots sont toujours sur le plateau
     		test_drapeau(j1, j2); //On regarde si on a atteint un drapeau
     		test_trou(j1, j2); // On regarde si on est pas tombé dans un trou
+    		if(!test_fin_jeu(j1,j2))
+    			return;
     	}
     	
     }
@@ -120,6 +122,8 @@ public class Jeu {
 		    		test_plateau(j1,j2); // On regarde si les robots sont toujours sur le plateau
 		    		test_drapeau(j1,j2); //On regarde si on a atteint un drapeau
 		    		test_trou(j1 , j2); // On regarde si on est pas tombé dans un trou
+		    		if(!test_fin_jeu(j1,j2))
+		    			return;
 				}
 			else
 				j1.deplacement_rob_gene(c_j1.gettype_fleche(), j2);
@@ -134,6 +138,8 @@ public class Jeu {
 		    		test_plateau(j1,j2); // On regarde si les robots sont toujours sur le plateau
 		    		test_drapeau(j1,j2); //On regarde si on a atteint un drapeau
 		    		test_trou(j1 , j2); // On regarde si on est pas tombé dans un trou
+		    		if(!test_fin_jeu(j1,j2))
+		    			return;
 				}
 			else
 				j2.deplacement_rob_gene(c_j2.gettype_fleche(), j1);
@@ -150,6 +156,8 @@ public class Jeu {
 		    		test_plateau(j1,j2); // On regarde si les robots sont toujours sur le plateau
 		    		test_drapeau(j1,j2); //On regarde si on a atteint un drapeau
 		    		test_trou(j1 , j2); // On regarde si on est pas tombé dans un trou
+		    		if(!test_fin_jeu(j1,j2))
+		    			return;
 				}
 			else
 				j2.deplacement_rob_gene(c_j2.gettype_fleche(), j1);
@@ -164,6 +172,8 @@ public class Jeu {
 		    		test_plateau(j1,j2); // On regarde si les robots sont toujours sur le plateau
 		    		test_drapeau(j1,j2); //On regarde si on a atteint un drapeau
 		    		test_trou(j1 , j2); // On regarde si on est pas tombé dans un trou
+		    		if(!test_fin_jeu(j1,j2))
+		    			return;
 				}
 			else
 				j1.deplacement_rob_gene(c_j1.gettype_fleche(), j2);
@@ -228,16 +238,11 @@ public class Jeu {
      * @see Joueur#gagner_drapeau()
      */
     public void test_drapeau(Joueur j1, Joueur j2){
-    	System.out.println("rob x y : " + j2.getr().Getx() + " " + j2.getr().Gety());
-    	System.out.println("drapeau x y : " + plateau_jeu.Getdrapeau(3 - j2.Getcpt_drapeaux(),j2.getnum()).Getx() + " " + plateau_jeu.Getdrapeau(3 -j2.Getcpt_drapeaux(),j1.getnum()).Gety());
-    	
     	if(j1.getr().Getx() == plateau_jeu.Getdrapeau(3 - j1.Getcpt_drapeaux(),j1.getnum()).Getx() && j1.getr().Gety() == plateau_jeu.Getdrapeau(3 - j1.Getcpt_drapeaux(),j1.getnum()).Gety()){
     		j1.gagner_drapeau();
-    		System.out.println("nb drapeau = " + j1.Getcpt_drapeaux());
     	}
     	if(j2.getr().Getx() == plateau_jeu.Getdrapeau(3 - j2.Getcpt_drapeaux(),j2.getnum()).Getx() && j2.getr().Gety() == plateau_jeu.Getdrapeau(3 - j2.Getcpt_drapeaux(),j2.getnum()).Gety()){
     		j2.gagner_drapeau();
-    		System.out.println("nb drapeau = " + j2.Getcpt_drapeaux());
     	}
     	
     }
@@ -256,7 +261,6 @@ public class Jeu {
     	ArrayList<Case> tab_obs = plateau_jeu.Get_pose_obs();
     	int i = 0;
     	while(i < tab_obs.size()){
-    		System.out.println("xj1 = " + j1.getr().Getx() + "yj1 = " + j1.getr().Gety() + "obsx = " + tab_obs.get(i).Getx() + "obsy = " + tab_obs.get(i).Gety());
     		if(tab_obs.get(i).Getx() == j1.getr().Getx() && tab_obs.get(i).Gety() == j1.getr().Gety() ){
     			if(j1.getr().Getx() == ancienne_pos[0])
     				if(j1.getr().Gety() - ancienne_pos[1] < 0)
@@ -295,7 +299,6 @@ public class Jeu {
      */
     public void perdre_vie(Joueur j){
     	j.perdre_vie();
-    	System.out.println("nb _vie = " + j.Getnb_vie());
     }
     
     /**
@@ -344,18 +347,29 @@ public class Jeu {
      */
     public boolean test_fin_jeu(Joueur j1, Joueur j2){
     	if(j2.Getnb_vie() <= 0 || j1.Getcpt_drapeaux() == 4){
-    		System.out.println("VICTOIRE J1");
     		return false;
     	}
     	else
     		if(j1.Getnb_vie() <= 0 || j2.Getcpt_drapeaux() == 4){
-        			System.out.println("VICTOIRE J2");
         			return false;
         	}
     		else
     			return true;
     }
     
+    /**
+     * Fonction retournant le vainqueur du jeu (appelé uniquement en fin de jeu)
+     * @param j1 joueur 1
+     * @param j2 joueur 2
+     * @return vainqueur
+     */
+    public Joueur vainqueur(Joueur j1, Joueur j2){
+    	if(j2.Getnb_vie() <= 0 || j1.Getcpt_drapeaux() == 4){
+    		return j1;
+    	}
+    	else
+    		return j2;
+    }
     /**
      * Fonction main.
      * On construit la classe Jeu, paquet et plateau. Puis on lance dans une boucle while avec pour condition la fonction test_fin_jeu.
@@ -385,7 +399,7 @@ public class Jeu {
         j.get_plateau().change_jcour(j.get_joueur(1));
         j.get_plateau().change_pioche(p.piocher_cartes());
         while(j.test_fin_jeu(j.get_joueur(1),j.get_joueur(2))){
-        	if(j.get_plateau().get_cpt_main() >= 6 && tour == 2){
+        	if(j.get_plateau().get_cpt_main() >= 7 && tour == 2){
         		try {
     				Thread.sleep(10);
     			}
@@ -393,9 +407,11 @@ public class Jeu {
     				Thread.currentThread().interrupt();
     			}
         		j.deplacement_robot(j.get_plateau().get_j(),j.get_joueur(1));
+        		if(!j.test_fin_jeu(j.get_joueur(1),j.get_joueur(2)))
+        			break;
         		tour = 0;
         	}
-        	if(j.get_plateau().get_cpt_main() >= 7){
+        	if(j.get_plateau().get_cpt_main() >= 8){
         		tour ++;
         		if(j.get_plateau().get_j().getnum() == j.get_joueur(1).getnum())
         			j.get_plateau().change_jcour(j.get_joueur(2));
@@ -408,7 +424,7 @@ public class Jeu {
         	else
         		System.out.print("");
         }
-        j.get_plateau().game_over();
+        j.get_plateau().game_over(j.vainqueur(j.get_joueur(1), j.get_joueur(2)));
         try {
 			Thread.sleep(8000);
 		}
